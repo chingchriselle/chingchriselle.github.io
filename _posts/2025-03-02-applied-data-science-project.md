@@ -17,7 +17,7 @@ To improve online channel sales at Sephora
 ## Work Accomplished
 This project explores how objective 1 can be achieved to meet Sephora's business goal. 
 
-### Data Source:
+### Data Source
 Information on products and customer reviews on its skincare catalogue were scrapped from SEPHORA’s online store (collected as of Mar 2023) and published in KAGGLE [[source](https://www.kaggle.com/datasets/nadyinky/sephora-products-and-skincare-reviews/)]. Dataset:
 - Consists of 6 csv data files for over 8,000 products and more than 1 million customer reviews.
 - Includes 1 file “product_info” that provides product information and 5 files “reviews...” that provide customer reviews on skincare products. Both groups of files can be joined by a unique assigned product identifier “product_id”.
@@ -26,7 +26,7 @@ Information on products and customer reviews on its skincare catalogue were scra
 ### Data Preparation
 Objective 1 uses only data from "product_info". The data file contains 27 columns and over 8,000 rows of numerical and categorical values. Each row points to each distinct product that can be identified by its "product_id". 
 
-#### Dataframe:
+**Dataframe:**
 ![image](https://github.com/user-attachments/assets/bd11a90b-4ed5-428b-aaf8-7a6c5633fd25)
 
 After data exploration, data cleaning was applied to 3 key problem areas outlined below.
@@ -313,6 +313,7 @@ Based on evaluation criterion, RF is the more superior model.
 - Compared to DT, RF has higher R². While DT model captures 35% of variation in product prices, RF model captures 81% of variation in product prices. This means that RF model captures most of the factors that influence product prices, which is critical to making informed pricing decisions.
 
 **RF: Feature Importance Metrics**
+
 In an especially competitive online market, feature importance metrics in RF model could be useful in precisely identifying features that drive product prices.
 
 ![image](https://github.com/user-attachments/assets/2450f4fe-0568-4848-a588-a16cba035951)
@@ -321,7 +322,9 @@ In an especially competitive online market, feature importance metrics in RF mod
 - Other categorical hierarchies (e.g. tertiary_category) also contribute albeit less significantly.
 - Remaining features (e.g. limited_edition, sephora_exclusive) may not drive pricing predictions, but instead influence customers’ perception, purchasing habits etc.
 
+
 **RF: Partial Dependence Plots of Highly Important Features**
+
 Inclining curve in Partial Dependence Plots show how higher relative_price_index or avg_category_price corresponds to higher predicted price (with all other variables held constant).
 
 ![image](https://github.com/user-attachments/assets/d1553927-d1ff-43cf-b42e-685c94c4ba29)
@@ -335,12 +338,21 @@ The following recommendations may work hand-in-hand to strengthen this understan
 1. Category Price Tracking System: Product prices are monitored for shifts and trends within their respective tertiary, secondary and primary categories. 
 2. Categorical Price Positioning: For price-sensitive consumers interested in particular products from a specific category e.g. lip gloss (tertiary category), use price predictions to appropriately price new products in relation to respective categorical prices.
 3. Dynamic Pricing based on Categorical Shifts: As brands may set own baseline pricing standards for their products, and which may change in response to non-price sensitive factors like brand popularity, dynamically update prices of products in existing catalog depending on how prices of products within respective category shifts.  
-4. As competitive landscape evolves, model should be regularly retrained (in consideration of business issues..)
+4. As competitive landscape evolves, model should be regularly retrained (in consideration of business issues specified below)
+
+**Business Issues**
+
+From a price prediction perspective, many non-price attributes e.g. ratings_band, brand_id (i.e. brand name) appear to contribute minimally. Data available may not have enough variations or are unmeaningful.
+1. Enhance data collection. More conclusive indicators of brand value e.g. marketing spend by brand / brand product may help predict how brand value influences products’ prices.
+2. Additionally, expand data collection beyond brand-related or product-related attributes to explain price variations. For instance, 
+- As consumer demographic data (e.g. age, income level, geographical location) may inform spending habits and price variations based on demographic or region, consumer-centric features may be engineered to help model evolve its predictive power and position prices.
+- To enhance the impact of price-related attributes like discount_percentage, time-series data like season / month of promotion, promotion duration can be collected and related features engineered.
+
+With enhanced data collection and preparation, model is prepped to more accurate pricing predictions. This is essential to help Sephora inform pricing decisions and implement strategies as it reacts to an
+evolving market / sensitises to consumer needs and ultimately, increase sales and market share.
 
 ## AI Ethics
 Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
 
 ## Source Codes and Datasets
 Link to GitHub repo: https://github.com/chingchriselle/ITD214-Workbook
