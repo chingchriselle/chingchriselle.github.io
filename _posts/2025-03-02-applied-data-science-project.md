@@ -6,12 +6,15 @@ categories: ITD214
 ---
 ## Project Background
 **Industry Landscape**
+
 The Beauty and Personal Care industry is projected to exceed US$100bil in revenues in 2025. In the next 5 years, annual industry growth is estimated to hit 2.9% [[source](https://www.statista.com/outlook/cmo/beauty-personal-care/united-states)]. More importantly, sales from online avenues are expected to account for about 65.9% of 2025 revenues. SEPHORA is a leading beauty and personal care products retailer. It offers a catalogue of brand and housebrand goods across brick-and-mortar stores as wellas online. In 2022, its revenues from the United States reached almost US$7bil, and accounted for more than half of its global revenues [[source](https://www.statista.com/statistics/1445562/retail-sales-of-sephora-globally/)].
 
 **Business Goal**
+
 To improve online channel sales at Sephora
 
 **Objectives**
+
 1. To identify key factors driving product prices
 2. To predict customer sentiment towards beauty products based on review text
 
