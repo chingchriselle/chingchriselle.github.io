@@ -1,6 +1,6 @@
 ---
 layout: post
-author: Ching Chriselle
+author: Ching Sze Sin Chriselle
 title: "Applied Data Science Project"
 categories: ITD214
 ---
