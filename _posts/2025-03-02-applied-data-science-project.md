@@ -38,7 +38,7 @@ Several variables had many null values. They were either imputed by logic, or ne
 
 ![image](https://github.com/user-attachments/assets/4399cab3-823c-4b93-8d2a-d5b332c08d11)
 
-#### Imputation by Logic
+**Imputation by Logic**
 - Imputed null values in "tertiary_category" as “Unknown” to demonstrate that these products do not have such in-depth categorical differentiation.
 ```python
 df['tertiary_category'] = df['tertiary_category'].fillna('Unknown')
@@ -61,7 +61,7 @@ df['rating'] = df['rating'].fillna(0)
 df['reviews'] = df['reviews'].fillna(0)
 ```
 
-#### Feature Engineering
+**Feature Engineering**
 Some price-related variables e.g. "sale_price_usd", "value_price_usd" are extremely sparse. Other meaningful features were created to replace such columns.
 - Discount Percentage: Expresses the % difference between price_usd and sale_price_usd. Products with no discounts are labelled 0.
 ```python
@@ -69,14 +69,11 @@ df['discount_percentage'] = ((df['price_usd'] - df['sale_price_usd']) / df['pric
 df['discount_percentage'] = df['discount_percentage'].fillna(0)
 ```
 - Relative Price Index: Divides individual product prices over average prices for each product’s corresponding secondary category.
-
 ```python
 # Calculate the average price per category
 avg_price_per_category = df.groupby("secondary_category")["price_usd"].mean()
-
 # Merge the average category price back into the main dataframe
 df["avg_category_price"] = df["secondary_category"].map(avg_price_per_category)
-
 # Compute the Relative Price Index
 df["relative_price_index"] = df["price_usd"] / df["avg_category_price"]
 ```
@@ -87,23 +84,19 @@ To minimise variances in values for some variables e.g. "loves_count", "reviews"
 ![image](https://github.com/user-attachments/assets/7b0e81fe-acb2-41f1-a8a7-1171499c1973)
 ![image](https://github.com/user-attachments/assets/e7e9ccac-3239-4fb2-b99d-48813adfc253)
 
-#### Log Transformation
-
+**Log Transformation**
 ```python
 df['log_loves'] = np.log1p(df['loves_count'])
 df['log_reviews'] = np.log1p(df['reviews'])
 ```
 
-#### Binning
-
+**Binning**
 ```python
 # Define rating bands (bins) and labels
 rating_bins = [0, 1, 2, 3, 4, 5]
 rating_labels = ["0", "1", "2", "3", "4"] # where label = "0" value = <1, where label = "4" value = 4-5
-
 # Create a new column for rating bands
 df["rating_band"] = pd.cut(df["rating"], bins=rating_bins, labels=rating_labels, include_lowest=True)
-
 # Create log-transformed bins for "loves" and "reviews" based on 4 quantiles
 df['log_loves_band'] = pd.qcut(df['log_loves'], q=4, labels=['1','2','3','4'])
 df['log_reviews_band'] = pd.qcut(df['log_reviews'], q=4, labels=['1','2','3','4'])
