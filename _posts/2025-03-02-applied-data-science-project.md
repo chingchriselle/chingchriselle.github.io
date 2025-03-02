@@ -398,4 +398,4 @@ The Random Forest model may be too intricate for a non-technically trained stake
 
 
 ## Source Codes and Datasets
-Link to GitHub repository: [[https://github.com/chingchriselle/ITD214-Workbook](https://github.com/chingchriselle/ITD214-Workbook)]
+Link to GitHub repository: [https://github.com/chingchriselle/ITD214-Workbook(https://github.com/chingchriselle/ITD214-Workbook)]
