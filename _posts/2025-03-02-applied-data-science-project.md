@@ -344,34 +344,40 @@ The following recommendations may work hand-in-hand to strengthen this understan
 **Business Issues**
 
 From a price prediction perspective, many non-price attributes e.g. ratings_band, brand_id (i.e. brand name) appear to contribute minimally. Data available may not have enough variations or are unmeaningful.
-1. Enhance data collection. More conclusive indicators of brand value e.g. marketing spend by brand / brand product may help predict how brand value influences products’ prices.
+1. Enhance data collection. More conclusive indicators of brand value e.g. marketing spend by brand/brand product may help predict how brand value influences products’ prices.
 2. Additionally, expand data collection beyond brand-related or product-related attributes to explain price variations. For instance, 
 - As consumer demographic data (e.g. age, income level, geographical location) may inform spending habits and price variations based on demographic or region, consumer-centric features may be engineered to help model evolve its predictive power and position prices.
-- To enhance the impact of price-related attributes like discount_percentage, time-series data like season / month of promotion, promotion duration can be collected and related features engineered.
+- To enhance the impact of price-related attributes like discount_percentage, time-series data like season/month of promotion, promotion duration can be collected and related features engineered.
+3. The current model involves data on all products across categories. The outcome suggests that prices are category-dependent and -specific. Models specifically trained on particular categories e.g. skincare could be more useful for product pricing within respective category.
 
-With enhanced data collection and preparation, model is prepped to more accurate pricing predictions. This is essential to help Sephora inform pricing decisions and implement strategies as it reacts to an
-evolving market / sensitises to consumer needs and ultimately, increase sales and market share.
+With enhanced data collection, data preparation and model design, model is prepped to make more accurate pricing predictions. This is essential to help SEPHORA inform pricing decisions and implement strategies as it reacts to an evolving market and sensitises to consumer needs. Such is ultimately important for SEPHORA to increase sales and market share.
 
 ## AI Ethics
+
 **Privacy**
 
 If consumer-centric data e.g. demographic-related like age, gender, skin texture, income or browsing habits like products visited are integrated to enhance the pricing model, data must be captured and handled such that consumers' privacy is safeguarded. Consumers must be informed about data collection and consent to potential uses and applications. Sensitive consumer identifiers must also be anonymised to enhance data privacy. Without which, data privacy is at risk and consumers' trust could be eroded.
 
+
 **Fairness**
 
-Some existing variables e.g. certain brands and their related products are underrepresented in the dataset. Product variation like **colour tone** or **colour shade** is not captured either. Hence minority brands and skin tone/colour might be undervalued and model could result in bias as such groups are disadvantaged in representation. Conversely, brands and products with more data may be overrepresented. The model might make erroneous predictions in prices for implicated products, and reinforce certain cultural or economic stigmas e.g. socio-economic disparity.
+Some existing variables e.g. certain brands and their related products are underrepresented in the dataset. Colour-specific product features like **colour tone** or **colour shade** are not encapsulated either. Hence, minority brands and skin tone/colour might be undervalued and model could result in bias as such groups are disadvantaged in representation. Conversely, brands and products with more data may be overrepresented. The model might make erroneous predictions in prices for implicated products, and reinforce certain cultural or economic stigmas e.g. socio-economic disparity.
+
 
 **Accuracy**
 
-When certain variables are deemed to be insignificant to the model predictions and are omitted, the model may result in inaccurate predictions and misguide pricing decisions and strategies. For instance, without time-series data e.g. season / month of promotion, recommended prices may fail to reflect seasonal pricing trends. Without competitive product prices, Sephora may lose its appeal and consumer base. For instances where data collection is biased, inaccurate and / or incomplete, the model may predict prices that favour the oversampled majority class and fail to predict those that are emerging.
+When certain variables are deemed to be insignificant to the model predictions and are omitted, the model may result in inaccurate predictions and misguide pricing decisions and strategies. For instance, without time-series data e.g. season/month of promotion, recommended prices may fail to reflect seasonal pricing trends. Without competitive product prices, Sephora may lose its appeal and consumer base. For instances where data collection is biased, inaccurate and/or incomplete, the model may predict prices that favour the oversampled majority class and fail to predict those that are emerging.
+
 
 **Accountability**
 
 If variables are omitted or certain classes favoured due to any of the above reasons e.g. biased data collection, price predictions may be inaccurate or unstable. Decision makers and relevant stakeholders may find it challenging to explain and justify pricing strategies that result from the model's predictions. Should products be mispriced due to this model, the trajectory for redressing pricing decisions could also be unclear.
 
+
 **Transparency**
 
-The Random Forest model may be too intricate for a non-technically trained stakeholder to understand its construct. Without clear layman explanations, stakeholders may find it challenging to understand, trust, and rely on the model for the business' pricing decisions. The processes of data collection e.g. data sources, collection period, data preparation e.g. feature selection, dimension reduction, model construction and model evaluation e.g. criterion must also be clearly communicated and understood. This would reduce any missteps e.g. poor data integrity, model bias that could challenge the model's outcomes and reliability.  Stakeholders are consequently primed to be in a better position to excavate areas for data and / or model improvement and adjust pricing strategies.
+The Random Forest model may be too intricate for a non-technically trained stakeholder to understand its construct. Without clear layman explanations, stakeholders may find it challenging to understand, trust, and rely on the model for the business' pricing decisions. The processes of data collection e.g. data sources, collection period, data preparation e.g. feature selection, dimension reduction, model construction, and model evaluation e.g. criterion must also be clearly communicated and understood. This would reduce any missteps e.g. poor data integrity, model bias that could challenge the model's outcomes and reliability.  Stakeholders are consequently primed to be in a better position to excavate areas for data and/or model improvement and adjust pricing strategies.
+
 
 ## Source Codes and Datasets
 Link: https://github.com/chingchriselle/ITD214-Workbook
