@@ -106,7 +106,7 @@ df['log_reviews_band'] = pd.qcut(df['log_reviews'], q=4, labels=['1','2','3','4'
 #### 3. Highly Granular Values
 Other variables e.g. "size", "variation_type", "variation_value" have a few thousand unique values. They generally describe the kinds of variations e.g. formulation, scent, colour that a product has.
 
-#### Summary Statistics of Some Categories:
+**Summary Statistics of Some Categories:**
 ![image](https://github.com/user-attachments/assets/381eaf19-03cb-4d1c-b553-2ce6bc58d253)
 
 For the model to better understand these variations, new features e.g. "variation_formulation", "variation_scent" were engineered to replace these variables.
@@ -137,10 +137,12 @@ For instance, if a product varies in formulation, size and concentration, it has
 ![image](https://github.com/user-attachments/assets/eec737da-1e47-4457-aa3b-77368105e6a0)
 
 
+**Other Data Cleaning Steps** 
+
 Final data cleaning steps were performed below to prepare the dataset for modelling.
 
 #### Rename Column
-Column "child_count" was renamed to "variation_count" to clearly identify the number of product variations.
+- Column "child_count" was renamed to "variation_count" to clearly identify the number of product variations.
 ```
 df.rename(columns={'child_count': 'variation_count'}, inplace=True)
 ```
@@ -157,11 +159,11 @@ for col in categorical_cols:
     label_encoders[col] = le
 ```
 #### Dimension Reduction
-A correlation matrix was computed and "variation_concentration" was removed as it is highly correlated with "variation_formulation".
+- A correlation matrix was computed and "variation_concentration" was removed as it is highly correlated with "variation_formulation".
 
 ![image](https://github.com/user-attachments/assets/0f06858d-acc6-4a88-9050-add4bb3c21d1)
 
-As new features had been engineered, variables made redundant e.g. "loves_count", "reviews", "variation_value", " were also removed. Other variables of high cardinality, granularity e.g. "ingredients", "highlights", "size" that do not contribute meaningful patterns were also dropped.
+- As new features had been engineered, variables made redundant e.g. "loves_count", "reviews", "variation_value", " were also removed. Other variables of high cardinality, granularity e.g. "ingredients", "highlights", "size" that do not contribute meaningful patterns were also dropped.
 ```
 columns_to_remove = [
     "reviews",
@@ -200,18 +202,18 @@ columns_to_remove = [
 df.drop(columns=columns_to_remove, inplace=True, errors='ignore')
 ```
 ### Modelling
-#### Technique
+#### 1. Technique
 Decision Tree and Random Forest were chosen for the following reasons.
 
-Decision Trees (DT)
+**Decision Trees (DT)**
 - DT may help capture nonlinear relationships between variables better, especially when data has variance in values / skewed distribution.
 - DT is easily interpretable as it offers a visual ‘flowchart’ of how variables influence product prices (target variable).
 
-Random Forest (RF)
+**Random Forest (RF)**
 - Since RF averages the outcome of an ensemble of DTs, RF may provide more accurate predictions and alleviate issue of overfitting.
 - RF is also interpretable by its feature importance metrics and identifies variables that are influential to product prices.
 
-#### Test Design and Construction
+#### 2. Test Design and Construction
 - In order to identify key factors driving product prices, a list of features was created and the target variable was defined.
   
 ![image](https://github.com/user-attachments/assets/17511b33-b9ae-4abd-b2ee-d7d0019bc9a2)
@@ -228,6 +230,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 ```
 
 - In order to strike an optimal balance between under- and overfitting and to improve performance, respective hyperparameters e.g. tree depth were tuned in the DT and RF models. For each model, a 5-fold cross-validation function was used to derive the best combination of parameters. The models were then respectively trained on 80% training data and the best combination of hyperparameters.
+
 **DT**
 ```
 from sklearn.tree import DecisionTreeRegressor
@@ -262,6 +265,7 @@ best_dt = grid_dt.best_estimator_
 print("Best Decision Tree Parameters:", grid_dt.best_params_)
 Best Decision Tree Parameters: {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 5}
 ```
+
 **RF**
 ```
 from sklearn.ensemble import RandomForestRegressor
@@ -295,21 +299,43 @@ print("Best Random Forest Parameters:", random_rf.best_params_)
 Best Random Forest Parameters: {'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_depth': 10}
 ```
 ### Evaluation
-#### Criterion
+#### 1. Criterion
 The models were evaluated using the same set of criteria:
 - Root Mean Squared Error (RMSE): Measures accuracy of price predictions by predicting how far off the predicted price is from actual price. **Reliable prices can be forecasted to aid pricing strategies.**
 - Coefficient of Determination (R²): The higher the R², the better the model is at explaining why product prices vary based on features included. **This provides confidence that key variables impact pricing decisions.**
 
-#### Model Comparison: 
+#### 2. Model Comparison: 
 Based on evaluation criterion, RF is the more superior model.
+
 ![image](https://github.com/user-attachments/assets/08c71f98-8325-40a7-ae1b-1e6830fa5dc3)
 
+- While both models have relatively high RMSE, the RF model has lower RMSE than DT model. This shows that the RF model is better at making price predictions as predictions are much closer to actual prices, and can thereby better aid pricing decisions.
+- Compared to DT, RF has higher R². While DT model captures 35% of variation in product prices, RF model captures 81% of variation in product prices. This means that RF model captures most of the factors that influence product prices, which is critical to making informed pricing decisions.
 
+**RF: Feature Importance Metrics**
+In an especially competitive online market, feature importance metrics in RF model could be useful in precisely identifying features that drive product prices.
+
+![image](https://github.com/user-attachments/assets/2450f4fe-0568-4848-a588-a16cba035951)
+
+- Sephora’s product pricing is heavily influenced by how product prices compare with the average prices in respective product category and average product category prices as they contribute to more than 98% of the model's total predictive power.
+- Other categorical hierarchies (e.g. tertiary_category) also contribute albeit less significantly.
+- Remaining features (e.g. limited_edition, sephora_exclusive) may not drive pricing predictions, but instead influence customers’ perception, purchasing habits etc.
+
+**RF: Partial Dependence Plots of Highly Important Features**
+Inclining curve in Partial Dependence Plots show how higher relative_price_index or avg_category_price corresponds to higher predicted price (with all other variables held constant).
+
+![image](https://github.com/user-attachments/assets/d1553927-d1ff-43cf-b42e-685c94c4ba29)
+
+- For instance, when relative price index = 1.0, product price is predicted at about $50. When average category price is about $60, product price is predicted to be between $60 to $70.
 
 ## Recommendation and Analysis
-Explain the analysis and recommendations
+Dominant drivers like relative_price_index and avg_category_price, coupled with contributions (albeit smaller) from features like tertiary_category, secondary_category reinforces that **understanding product types / categories / classification is critical** for the model to predict pricing and hence inform pricing decisions. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+The following recommendations may work hand-in-hand to strengthen this understanding and strategise pricing in order to capture online market share:
+1. Category Price Tracking System: Product prices are monitored for shifts and trends within their respective tertiary, secondary and primary categories. 
+2. Categorical Price Positioning: For price-sensitive consumers interested in particular products from a specific category e.g. lip gloss (tertiary category), use price predictions to appropriately price new products in relation to respective categorical prices.
+3. Dynamic Pricing based on Categorical Shifts: As brands may set own baseline pricing standards for their products, and which may change in response to non-price sensitive factors like brand popularity, dynamically update prices of products in existing catalog depending on how prices of products within respective category shifts.  
+4. As competitive landscape evolves, model should be regularly retrained (in consideration of business issues..)
 
 ## AI Ethics
 Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
