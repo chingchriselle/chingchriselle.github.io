@@ -82,6 +82,7 @@ df["relative_price_index"] = df["price_usd"] / df["avg_category_price"]
 To minimise variances in values for some variables e.g. "loves_count", "reviews", "ratings", log transformation and binning of values were performed.
 
 ![image](https://github.com/user-attachments/assets/7b0e81fe-acb2-41f1-a8a7-1171499c1973)
+
 ![image](https://github.com/user-attachments/assets/e7e9ccac-3239-4fb2-b99d-48813adfc253)
 
 **Log Transformation**
@@ -138,18 +139,17 @@ For instance, if a product varies in formulation, size and concentration, it has
 ![image](https://github.com/user-attachments/assets/eec737da-1e47-4457-aa3b-77368105e6a0)
 
 
-**Other Data Cleaning Steps** 
+#### Other Data Cleaning Steps
 
 Final data cleaning steps were performed below to prepare the dataset for modelling.
 
-#### Rename Column
+**Rename Column**
 - Column "child_count" was renamed to "variation_count" to clearly identify the number of product variations.
-
 ```python
 df.rename(columns={'child_count': 'variation_count'}, inplace=True)
 ```
 
-#### Label Encoding Categorical Variables
+**Label Encoding Categorical Variables**
 ```python
 # Identify categorical columns that need encoding
 categorical_cols = ["primary_category", "secondary_category", "tertiary_category", "rating_band","log_loves_band","log_reviews_band"]
@@ -162,7 +162,7 @@ for col in categorical_cols:
     label_encoders[col] = le
 ```
 
-#### Dimension Reduction
+**Dimension Reduction**
 - A correlation matrix was computed and "variation_concentration" was removed as it is highly correlated with "variation_formulation".
 
 ![image](https://github.com/user-attachments/assets/0f06858d-acc6-4a88-9050-add4bb3c21d1)
@@ -316,7 +316,7 @@ The models were evaluated using the same set of criteria:
 - Root Mean Squared Error (RMSE): Measures accuracy of price predictions by predicting how far off the predicted price is from actual price. **Reliable prices can be forecasted to aid pricing strategies.**
 - Coefficient of Determination (R²): The higher the R², the better the model is at explaining why product prices vary based on features included. **This provides confidence that key variables impact pricing decisions.**
 
-#### 2. Model Comparison: 
+#### 2. Model Comparison
 Based on evaluation criterion, RF is the more superior model.
 
 ![image](https://github.com/user-attachments/assets/08c71f98-8325-40a7-ae1b-1e6830fa5dc3)
@@ -324,7 +324,8 @@ Based on evaluation criterion, RF is the more superior model.
 - While both models have relatively high RMSE, the RF model has lower RMSE than DT model. This shows that the RF model is better at making price predictions as predictions are much closer to actual prices, and can thereby better aid pricing decisions.
 - Compared to DT, RF has higher R². While DT model captures 35% of variation in product prices, RF model captures 81% of variation in product prices. This means that RF model captures most of the factors that influence product prices, which is critical to making informed pricing decisions.
 
-**RF: Feature Importance Metrics**
+#### 3. Random Forest as Price Prediction Model
+**Feature Importance Metrics**
 
 In an especially competitive online market, feature importance metrics in RF model could be useful in precisely identifying features that drive product prices.
 
@@ -335,7 +336,7 @@ In an especially competitive online market, feature importance metrics in RF mod
 - Remaining features (e.g. limited_edition, sephora_exclusive) may not drive pricing predictions, but instead influence customers’ perception, purchasing habits etc.
 
 
-**RF: Partial Dependence Plots of Highly Important Features**
+**Partial Dependence Plots of Highly Important Features**
 
 Inclining curve in Partial Dependence Plots show how higher relative_price_index or avg_category_price corresponds to higher predicted price (with all other variables held constant).
 
@@ -346,6 +347,7 @@ Inclining curve in Partial Dependence Plots show how higher relative_price_index
 ## Recommendation and Analysis
 Dominant drivers like relative_price_index and avg_category_price, coupled with contributions (albeit smaller) from features like tertiary_category, secondary_category reinforces that **understanding product types / categories / classification is critical** for the model to predict pricing and hence inform pricing decisions. 
 
+**Recommendations**
 The following recommendations may work hand-in-hand to strengthen this understanding and strategise pricing in order to capture online market share:
 1. Category Price Tracking System: Product prices are monitored for shifts and trends within their respective tertiary, secondary and primary categories. 
 2. Categorical Price Positioning: For price-sensitive consumers interested in particular products from a specific category e.g. lip gloss (tertiary category), use price predictions to appropriately price new products in relation to respective categorical prices.
