@@ -353,7 +353,25 @@ With enhanced data collection and preparation, model is prepped to more accurate
 evolving market / sensitises to consumer needs and ultimately, increase sales and market share.
 
 ## AI Ethics
-Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
+**Privacy**
+
+If consumer-centric data e.g. demographic-related like age, gender, skin texture, income or browsing habits like products visited are integrated to enhance the pricing model, data must be captured and handled such that consumers' privacy is safeguarded. Consumers must be informed about data collection and consent to potential uses and applications. Sensitive consumer identifiers must also be anonymised to enhance data privacy. Without which, data privacy is at risk and consumers' trust could be eroded.
+
+**Fairness**
+
+Some existing variables e.g. certain brands and their related products are underrepresented in the dataset. Product variation like **colour tone** or **colour shade** is not captured either. Hence minority brands and skin tone/colour might be undervalued and model could result in bias as such groups are disadvantaged in representation. Conversely, brands and products with more data may be overrepresented. The model might make erroneous predictions in prices for implicated products, and reinforce certain cultural or economic stigmas e.g. socio-economic disparity.
+
+**Accuracy**
+
+When certain variables are deemed to be insignificant to the model predictions and are omitted, the model may result in inaccurate predictions and misguide pricing decisions and strategies. For instance, without time-series data e.g. season / month of promotion, recommended prices may fail to reflect seasonal pricing trends. Without competitive product prices, Sephora may lose its appeal and consumer base. For instances where data collection is biased, inaccurate and / or incomplete, the model may predict prices that favour the oversampled majority class and fail to predict those that are emerging.
+
+**Accountability**
+
+If variables are omitted or certain classes favoured due to any of the above reasons e.g. biased data collection, price predictions may be inaccurate or unstable. Decision makers and relevant stakeholders may find it challenging to explain and justify pricing strategies that result from the model's predictions. Should products be mispriced due to this model, the trajectory for redressing pricing decisions could also be unclear.
+
+**Transparency**
+
+The Random Forest model may be too intricate for a non-technically trained stakeholder to understand its construct. Without clear layman explanations, stakeholders may find it challenging to understand, trust, and rely on the model for the business' pricing decisions. The processes of data collection e.g. data sources, collection period, data preparation e.g. feature selection, dimension reduction, model construction and model evaluation e.g. criterion must also be clearly communicated and understood. This would reduce any missteps e.g. poor data integrity, model bias that could challenge the model's outcomes and reliability.  Stakeholders are consequently primed to be in a better position to excavate areas for data and / or model improvement and adjust pricing strategies.
 
 ## Source Codes and Datasets
 Link: https://github.com/chingchriselle/ITD214-Workbook
