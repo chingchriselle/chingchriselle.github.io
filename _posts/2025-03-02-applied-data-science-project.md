@@ -41,7 +41,6 @@ Several variables had many null values. They were either imputed by logic, or ne
 - Imputed null values in "tertiary_category" as “Unknown” to demonstrate that these products do not have such in-depth categorical differentiation.
 ```
 df['tertiary_category'] = df['tertiary_category'].fillna('Unknown')
-
 ```
 - There are 8 empty values in "secondary_category". They were imputed variedly below.
 ```
