@@ -4,7 +4,7 @@ title: "Applied Data Science Project"
 categories: ITD214
 ---
 ## Project Background
-### Industry Background:
+### Industry Landscape:
 The Beauty and Personal Care industry is projected to exceed US$100bil in revenues in 2025. In the next 5 years, annual industry growth is estimated to hit 2.9% [[source](https://www.statista.com/outlook/cmo/beauty-personal-care/united-states)]. More importantly, sales from online avenues are expected to account for about 65.9% of 2025 revenues. SEPHORA is a leading beauty and personal care products retailer. It offers a catalogue of brand and housebrand goods across brick-and-mortar stores as wellas online. In 2022, its revenues from the United States reached almost US$7bil, and accounted for more than half of its global revenues [[source](https://www.statista.com/statistics/1445562/retail-sales-of-sephora-globally/)].
 
 ### Business Goal:
@@ -29,10 +29,11 @@ Objective 1 uses only data from "product_info". The data file contains 27 column
 #### Dataframe:
 ![image](https://github.com/user-attachments/assets/bd11a90b-4ed5-428b-aaf8-7a6c5633fd25)
 
-Upon data exploration, data cleaning was applied to 3 key problem areas outlined below.
+After data exploration, data cleaning was applied to 3 key problem areas outlined below.
 
 #### 1. Sparse Columns with Null Values
 Several variables had many null values. They were either imputed by logic, or new features were engineered to replace such columns.
+
 ![image](https://github.com/user-attachments/assets/4399cab3-823c-4b93-8d2a-d5b332c08d11)
 
 #### Imputation by Logic
@@ -135,11 +136,175 @@ For instance, if a product varies in formulation, size and concentration, it has
 
 ![image](https://github.com/user-attachments/assets/eec737da-1e47-4457-aa3b-77368105e6a0)
 
-### Modelling
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
 
+Final data cleaning steps were performed below to prepare the dataset for modelling.
+
+#### Rename Column
+Column "child_count" was renamed to "variation_count" to clearly identify the number of product variations.
+```
+df.rename(columns={'child_count': 'variation_count'}, inplace=True)
+```
+#### Label Encoding Categorical Variables
+```
+# Identify categorical columns that need encoding
+categorical_cols = ["primary_category", "secondary_category", "tertiary_category", "rating_band","log_loves_band","log_reviews_band"]
+
+# Apply Label Encoding
+label_encoders = {}
+for col in categorical_cols:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col])
+    label_encoders[col] = le
+```
+#### Dimension Reduction
+A correlation matrix was computed and "variation_concentration" was removed as it is highly correlated with "variation_formulation".
+
+![image](https://github.com/user-attachments/assets/0f06858d-acc6-4a88-9050-add4bb3c21d1)
+
+As new features had been engineered, variables made redundant e.g. "loves_count", "reviews", "variation_value", " were also removed. Other variables of high cardinality, granularity e.g. "ingredients", "highlights", "size" that do not contribute meaningful patterns were also dropped.
+```
+columns_to_remove = [
+    "reviews",
+    # Removed as log_reviews and log_reviews_band created to address skewed data
+    "loves_count",
+    # Removed as log_loves and log_loves_band created to address skewed data
+    "product_id", 
+    # Removed because it contains too many unique values, making it irrelevant for machine learning models
+    "product_name", 
+    # Removed for the same reason as 'product_id'— high uniqueness means it doesn’t contribute useful patterns
+    "rating",
+    # Removed as new "rating_band" column has been created to handle ratings
+    "brand_name", 
+    # Removed because the brand is already represented by 'brand_id', avoiding redundant information
+    "size", 
+    # Removed due to high cardinality (over 2,000 unique values), making it too varied for meaningful analysis
+    "variation_property", 
+    "variation_value",
+    "variation_desc", 
+    # Removed above 3 columns because new variation columns now handle product variations explicitly
+    "ingredients", 
+    # Removed as ingredient lists are highly specific to product, making it difficult to generalize for modeling
+    "child_max_price",
+    "child_min_price",
+    "value_price_usd", 
+    "sale_price_usd",
+    # Removed above due to a high percentage of missing values, making them unreliable for analysis. More 
+    # meaningful features like discount percentage / relative price index have also been created.
+    "highlights" 
+    # Removed as product attributes (e.g., 'Vegan', 'Matte Finish') are too granular and do not contribute 
+    # significantly to structured analysis."
+   
+]
+
+# Remove the specified columns
+df.drop(columns=columns_to_remove, inplace=True, errors='ignore')
+```
+### Modelling
+#### Technique
+Decision Tree and Random Forest were chosen for the following reasons.
+
+Decision Trees (DT)
+- DT may help capture nonlinear relationships between variables better, especially when data has variance in values / skewed distribution.
+- DT is easily interpretable as it offers a visual ‘flowchart’ of how variables influence product prices (target variable).
+
+Random Forest (RF)
+- Since RF averages the outcome of an ensemble of DTs, RF may provide more accurate predictions and alleviate issue of overfitting.
+- RF is also interpretable by its feature importance metrics and identifies variables that are influential to product prices.
+
+#### Test Design and Construction
+- In order to identify key factors driving product prices, a list of features was created and the target variable was defined.
+  
+![image](https://github.com/user-attachments/assets/17511b33-b9ae-4abd-b2ee-d7d0019bc9a2)
+
+- Data was split into 80% training and 20% testing sets.
+```
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Split into train and test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+```
+
+- In order to strike an optimal balance between under- and overfitting and to improve performance, respective hyperparameters e.g. tree depth were tuned in the DT and RF models. For each model, a 5-fold cross-validation function was used to derive the best combination of parameters. The models were then respectively trained on 80% training data and the best combination of hyperparameters.
+**DT**
+```
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import GridSearchCV
+
+# Define parameter grid
+param_grid_dt = {
+    'max_depth': [3, 5, 7, 10],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 5]
+}
+
+# Create the DecisionTreeRegressor
+dt = DecisionTreeRegressor(random_state=42)
+
+# GridSearchCV
+grid_dt = GridSearchCV(
+    estimator=dt,
+    param_grid=param_grid_dt,
+    scoring='neg_mean_squared_error',  # or 'r2'
+    cv=5,
+    n_jobs=-1
+)
+
+# Fit on training data
+grid_dt.fit(X_train, y_train)
+
+# Best estimator and parameters
+best_dt = grid_dt.best_estimator_
+```
+```
+print("Best Decision Tree Parameters:", grid_dt.best_params_)
+Best Decision Tree Parameters: {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 5}
+```
+**RF**
+```
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import RandomizedSearchCV
+
+# Define parameter distributions for RandomizedSearchCV
+param_dist_rf = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [3, 5, 7, 10],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 5]
+}
+
+rf = RandomForestRegressor(random_state=42)
+
+random_rf = RandomizedSearchCV(
+    estimator=rf,
+    param_distributions=param_dist_rf,
+    scoring='neg_mean_squared_error',  # or 'r2'
+    n_iter=20,  
+    cv=5,
+    random_state=42,
+    n_jobs=-1
+)
+
+random_rf.fit(X_train, y_train)
+best_rf = random_rf.best_estimator_
+```
+```
+print("Best Random Forest Parameters:", random_rf.best_params_)
+Best Random Forest Parameters: {'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_depth': 10}
+```
 ### Evaluation
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+#### Criterion
+The models were evaluated using the same set of criteria:
+- Root Mean Squared Error (RMSE): Measures accuracy of price predictions by predicting how far off the predicted price is from actual price. **Reliable prices can be forecasted to aid pricing strategies.**
+- Coefficient of Determination (R²): The higher the R², the better the model is at explaining why product prices vary based on features included. **This provides confidence that key variables impact pricing decisions.**
+
+#### Model Comparison: 
+Based on evaluation criterion, RF is the more superior model.
+![image](https://github.com/user-attachments/assets/08c71f98-8325-40a7-ae1b-1e6830fa5dc3)
+
+
 
 ## Recommendation and Analysis
 Explain the analysis and recommendations
