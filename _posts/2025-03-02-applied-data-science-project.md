@@ -60,6 +60,7 @@ if not missing_secondary_category_df.empty:
 df['rating'] = df['rating'].fillna(0)
 df['reviews'] = df['reviews'].fillna(0)
 ```
+
 #### Feature Engineering
 Some price-related variables e.g. "sale_price_usd", "value_price_usd" are extremely sparse. Other meaningful features were created to replace such columns.
 - Discount Percentage: Expresses the % difference between price_usd and sale_price_usd. Products with no discounts are labelled 0.
@@ -68,6 +69,7 @@ df['discount_percentage'] = ((df['price_usd'] - df['sale_price_usd']) / df['pric
 df['discount_percentage'] = df['discount_percentage'].fillna(0)
 ```
 - Relative Price Index: Divides individual product prices over average prices for each product’s corresponding secondary category.
+
 ```python
 # Calculate the average price per category
 avg_price_per_category = df.groupby("secondary_category")["price_usd"].mean()
@@ -78,6 +80,7 @@ df["avg_category_price"] = df["secondary_category"].map(avg_price_per_category)
 # Compute the Relative Price Index
 df["relative_price_index"] = df["price_usd"] / df["avg_category_price"]
 ```
+
 #### 2. Large Spread of Values
 To minimise variances in values for some variables e.g. "loves_count", "reviews", "ratings", log transformation and binning of values were performed.
 
@@ -85,12 +88,15 @@ To minimise variances in values for some variables e.g. "loves_count", "reviews"
 ![image](https://github.com/user-attachments/assets/e7e9ccac-3239-4fb2-b99d-48813adfc253)
 
 #### Log Transformation
-```
+
+```python
 df['log_loves'] = np.log1p(df['loves_count'])
 df['log_reviews'] = np.log1p(df['reviews'])
 ```
+
 #### Binning
-```
+
+```python
 # Define rating bands (bins) and labels
 rating_bins = [0, 1, 2, 3, 4, 5]
 rating_labels = ["0", "1", "2", "3", "4"] # where label = "0" value = <1, where label = "4" value = 4-5
@@ -102,6 +108,7 @@ df["rating_band"] = pd.cut(df["rating"], bins=rating_bins, labels=rating_labels,
 df['log_loves_band'] = pd.qcut(df['log_loves'], q=4, labels=['1','2','3','4'])
 df['log_reviews_band'] = pd.qcut(df['log_reviews'], q=4, labels=['1','2','3','4'])
 ```
+
 #### 3. Highly Granular Values
 Other variables e.g. "size", "variation_type", "variation_value" have a few thousand unique values. They generally describe the kinds of variations e.g. formulation, scent, colour that a product has.
 
@@ -109,7 +116,8 @@ Other variables e.g. "size", "variation_type", "variation_value" have a few thou
 ![image](https://github.com/user-attachments/assets/381eaf19-03cb-4d1c-b553-2ce6bc58d253)
 
 For the model to better understand these variations, new features e.g. "variation_formulation", "variation_scent" were engineered to replace these variables.
-```
+
+```python
 # Rename column 'variation_type' to 'variation_property' to prevent subsequent duplication
 df.rename(columns={'variation_type': 'variation_property'}, inplace=True)
 
@@ -130,6 +138,7 @@ df.loc[df['variation_property'].str.contains('Size', na=False), 'variation_size'
 df.loc[df['variation_property'].str.contains('Concentration', na=False), 'variation_concentration'] = 1
 df.loc[df['variation_property'].str.contains('Type', na=False), 'variation_type'] = 1
 ```
+
 For instance, if a product varies in formulation, size and concentration, it has value = 1 (i.e. yes) in the respective variables, and 0 (i.e. no) in other variation_XX columns.
 
 
@@ -142,11 +151,13 @@ Final data cleaning steps were performed below to prepare the dataset for modell
 
 #### Rename Column
 - Column "child_count" was renamed to "variation_count" to clearly identify the number of product variations.
-```
+
+```python
 df.rename(columns={'child_count': 'variation_count'}, inplace=True)
 ```
+
 #### Label Encoding Categorical Variables
-```
+```python
 # Identify categorical columns that need encoding
 categorical_cols = ["primary_category", "secondary_category", "tertiary_category", "rating_band","log_loves_band","log_reviews_band"]
 
@@ -157,13 +168,15 @@ for col in categorical_cols:
     df[col] = le.fit_transform(df[col])
     label_encoders[col] = le
 ```
+
 #### Dimension Reduction
 - A correlation matrix was computed and "variation_concentration" was removed as it is highly correlated with "variation_formulation".
 
 ![image](https://github.com/user-attachments/assets/0f06858d-acc6-4a88-9050-add4bb3c21d1)
 
 - As new features had been engineered, variables made redundant e.g. "loves_count", "reviews", "variation_value", " were also removed. Other variables of high cardinality, granularity e.g. "ingredients", "highlights", "size" that do not contribute meaningful patterns were also dropped.
-```
+
+```python
 columns_to_remove = [
     "reviews",
     # Removed as log_reviews and log_reviews_band created to address skewed data
@@ -200,6 +213,7 @@ columns_to_remove = [
 # Remove the specified columns
 df.drop(columns=columns_to_remove, inplace=True, errors='ignore')
 ```
+
 ### Modelling
 #### 1. Technique
 Decision Tree and Random Forest were chosen for the following reasons.
@@ -218,7 +232,8 @@ Decision Tree and Random Forest were chosen for the following reasons.
 ![image](https://github.com/user-attachments/assets/17511b33-b9ae-4abd-b2ee-d7d0019bc9a2)
 
 - Data was split into 80% training and 20% testing sets.
-```
+
+```python
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -231,7 +246,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 - In order to strike an optimal balance between under- and overfitting and to improve performance, respective hyperparameters e.g. tree depth were tuned in the DT and RF models. For each model, a 5-fold cross-validation function was used to derive the best combination of parameters. The models were then respectively trained on 80% training data and the best combination of hyperparameters.
 
 **DT**
-```
+
+```python
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
 
@@ -260,13 +276,15 @@ grid_dt.fit(X_train, y_train)
 # Best estimator and parameters
 best_dt = grid_dt.best_estimator_
 ```
-```
+
+```python
 print("Best Decision Tree Parameters:", grid_dt.best_params_)
 Best Decision Tree Parameters: {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 5}
 ```
 
 **RF**
-```
+
+```python
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import RandomizedSearchCV
 
@@ -293,10 +311,12 @@ random_rf = RandomizedSearchCV(
 random_rf.fit(X_train, y_train)
 best_rf = random_rf.best_estimator_
 ```
-```
+
+```python
 print("Best Random Forest Parameters:", random_rf.best_params_)
 Best Random Forest Parameters: {'n_estimators': 100, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_depth': 10}
 ```
+
 ### Evaluation
 #### 1. Criterion
 The models were evaluated using the same set of criteria:
