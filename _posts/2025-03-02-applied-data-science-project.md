@@ -40,17 +40,15 @@ Several variables had many null values. They were either imputed by logic, or ne
 
 #### Imputation by Logic
 - Imputed null values in "tertiary_category" as “Unknown” to demonstrate that these products do not have such in-depth categorical differentiation.
-```
+```python
 df['tertiary_category'] = df['tertiary_category'].fillna('Unknown')
 ```
 - There are 8 empty values in "secondary_category". They were imputed variedly below.
-```
+```python
 if not missing_secondary_category_df.empty:
-    
     # Get the most common secondary_category for Fragrance and impute corresponding index
     most_common_fragrance_category = df[df['primary_category'] == "Fragrance"]['secondary_category'].mode()[0]
     df.loc[df.index == 986, 'secondary_category'] = most_common_fragrance_category
-    
     # For the following products, imputation of secondary_category by logic after referencing product name
     df.loc[df.index == 2043, 'secondary_category'] = "Fragrance"
     df.loc[df.index == 6661, 'secondary_category'] = "Cleansers"
@@ -58,19 +56,19 @@ if not missing_secondary_category_df.empty:
     df.loc[df.index == 8190, 'secondary_category'] = "Mini Size"
 ```
 - Zeroised null values in "ratings" and "reviews" to indicate that products were not rated or reviewed.
-```
+```python
 df['rating'] = df['rating'].fillna(0)
 df['reviews'] = df['reviews'].fillna(0)
 ```
 #### Feature Engineering
 Some price-related variables e.g. "sale_price_usd", "value_price_usd" are extremely sparse. Other meaningful features were created to replace such columns.
 - Discount Percentage: Expresses the % difference between price_usd and sale_price_usd. Products with no discounts are labelled 0.
-```
+```python
 df['discount_percentage'] = ((df['price_usd'] - df['sale_price_usd']) / df['price_usd']) * 100
 df['discount_percentage'] = df['discount_percentage'].fillna(0)
 ```
 - Relative Price Index: Divides individual product prices over average prices for each product’s corresponding secondary category.
-```
+```python
 # Calculate the average price per category
 avg_price_per_category = df.groupby("secondary_category")["price_usd"].mean()
 
