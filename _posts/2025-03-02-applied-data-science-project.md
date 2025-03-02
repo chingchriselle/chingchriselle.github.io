@@ -5,13 +5,13 @@ title: "Applied Data Science Project"
 categories: ITD214
 ---
 ## Project Background
-### Industry Landscape:
+**Industry Landscape**
 The Beauty and Personal Care industry is projected to exceed US$100bil in revenues in 2025. In the next 5 years, annual industry growth is estimated to hit 2.9% [[source](https://www.statista.com/outlook/cmo/beauty-personal-care/united-states)]. More importantly, sales from online avenues are expected to account for about 65.9% of 2025 revenues. SEPHORA is a leading beauty and personal care products retailer. It offers a catalogue of brand and housebrand goods across brick-and-mortar stores as wellas online. In 2022, its revenues from the United States reached almost US$7bil, and accounted for more than half of its global revenues [[source](https://www.statista.com/statistics/1445562/retail-sales-of-sephora-globally/)].
 
-### Business Goal:
+**Business Goal**
 To improve online channel sales at Sephora
 
-### Objectives:
+**Objectives**
 1. To identify key factors driving product prices
 2. To predict customer sentiment towards beauty products based on review text
 
@@ -62,6 +62,7 @@ df['reviews'] = df['reviews'].fillna(0)
 ```
 
 **Feature Engineering**
+
 Some price-related variables e.g. "sale_price_usd", "value_price_usd" are extremely sparse. Other meaningful features were created to replace such columns.
 - Discount Percentage: Expresses the % difference between price_usd and sale_price_usd. Products with no discounts are labelled 0.
 ```python
@@ -348,6 +349,7 @@ Inclining curve in Partial Dependence Plots show how higher relative_price_index
 Dominant drivers like relative_price_index and avg_category_price, coupled with contributions (albeit smaller) from features like tertiary_category, secondary_category reinforces that **understanding product types / categories / classification is critical** for the model to predict pricing and hence inform pricing decisions. 
 
 **Recommendations**
+
 The following recommendations may work hand-in-hand to strengthen this understanding and strategise pricing in order to capture online market share:
 1. Category Price Tracking System: Product prices are monitored for shifts and trends within their respective tertiary, secondary and primary categories. 
 2. Categorical Price Positioning: For price-sensitive consumers interested in particular products from a specific category e.g. lip gloss (tertiary category), use price predictions to appropriately price new products in relation to respective categorical prices.
@@ -393,4 +395,4 @@ The Random Forest model may be too intricate for a non-technically trained stake
 
 
 ## Source Codes and Datasets
-Link to GitHub Source Code and Dataset repository: (https://github.com/chingchriselle/ITD214-Workbook)
+Link to GitHub repository: (https://github.com/chingchriselle/ITD214-Workbook)
