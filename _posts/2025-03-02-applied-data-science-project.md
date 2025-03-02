@@ -27,6 +27,7 @@ Information on products and customer reviews on its skincare catalogue were scra
 Objective 1 uses only data from "product_info". The data file contains 27 columns and over 8,000 rows of numerical and categorical values. Each row points to each distinct product that can be identified by its "product_id". 
 
 **Dataframe:**
+
 ![image](https://github.com/user-attachments/assets/bd11a90b-4ed5-428b-aaf8-7a6c5633fd25)
 
 After data exploration, data cleaning was applied to 3 key problem areas outlined below.
