@@ -356,4 +356,4 @@ evolving market / sensitises to consumer needs and ultimately, increase sales an
 Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
 
 ## Source Codes and Datasets
-Link to GitHub repo: https://github.com/chingchriselle/ITD214-Workbook
+Link: https://github.com/chingchriselle/ITD214-Workbook
